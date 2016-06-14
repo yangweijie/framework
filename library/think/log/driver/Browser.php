@@ -116,14 +116,11 @@ JS;
         foreach ($msg as $key => $m) {
             switch ($type) {
                 case '调试':
-                    //我多么希望进来的是原数据格式而不是字符串
-                    if(substr($m, 0, 5) == 'array'){
-                        eval("\$o = $m;");
-                        $line[]  = "console.log(".json_encode($o).");";
-                    }else{
-                        $msg = addslashes($m);
-                        $msg = str_replace(PHP_EOL, '\n', $msg);
-                        $line[] = "console.log('$msg');";
+                    $var_type = gettype($m);
+                    if(in_array($var_type, ['array', 'string'])){
+                        $line[]  = "console.log(".json_encode($m).");";
+                    }else if(in_array($var_type, ['object', 'resource'])){
+                        $line[]  = "console.log(".json_encode(var_export($m, 1)).");";
                     }
                     break;
                 case '错误':
